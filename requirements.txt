@@ -1,0 +1,7 @@
+langchain
+langchain_community
+openai
+streamlit
+newsapi-python
+pydantic==1.10.2
+streamlit-authenticator
