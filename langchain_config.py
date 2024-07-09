@@ -29,7 +29,7 @@ class MockNewsApiClient:
 
 # Patching the OpenAI and NewsApiClient classes
 with patch('langchain_openai.OpenAI', MockOpenAI), patch('newsapi.NewsApiClient', MockNewsApiClient):
-    openai_api_key = 'sk-proj-ZV8VYoRDEPaL7eMyLxidT3BlbkFJ2t3jzKYR4tA4FGSRIuCA'
+    openai_api_key = 'sk-proj-jsFXcInKfwMto5JHf8pXT3BlbkFJrbQz7T6IE0GJ1ex6wuN9'
     openai = OpenAI(api_key=openai_api_key)
 
     newsapi = NewsApiClient(api_key='07ddff56fdb1407caf7d1075d16326fc')
