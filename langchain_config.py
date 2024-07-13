@@ -1,10 +1,14 @@
+import streamlit as st
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from newsapi import NewsApiClient
 
+# Read API keys from Streamlit secrets
+openai_api_key = st.secrets["openai_api_key"]
+newsapi_key = st.secrets["newsapi_key"]
+
 # Initialize OpenAI API
-openai_api_key = 'sk-proj-FsWNF91GJItVdVZfkuVAT3BlbkFJsdYKmR5GYJRosUvO63aG'  
 openai = OpenAI(api_key=openai_api_key)
 
 # Define Prompt Template
@@ -19,7 +23,6 @@ prompt = PromptTemplate(template=template, input_variables=['query', 'summaries'
 llm_chain = LLMChain(prompt=prompt, llm=openai)
 
 # Initialize NewsAPI
-newsapi_key = "07ddff56fdb1407caf7d1075d16326fc"  
 newsapi = NewsApiClient(api_key=newsapi_key)
 
 def get_news_articles(query):

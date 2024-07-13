@@ -27,9 +27,7 @@ login_fields = {
 }
 
 # Login using the updated method
-authentication_status, username, name = authenticator.login(
-    fields=login_fields
-)
+authentication_status, username, name = authenticator.login(fields=login_fields)
 
 if authentication_status:
     st.sidebar.title('Navigation')
@@ -47,19 +45,22 @@ if authentication_status:
         if query:
             with st.spinner('Fetching and summarizing news articles...'):
                 summaries = get_summary(query)
-                response = llm_chain.run({'query': query, 'summaries': summaries})
-                # Save query
-                with open('queries.txt', 'a') as file:
-                    file.write(query + '\n')
-            st.success('Done!')
-            st.write('### Summary:')
-            st.write(response)
-            st.download_button(
-                label="Download Summary",
-                data=response,
-                file_name="summary.txt",
-                mime="text/plain"
-            )
+                if "Insufficient quota" in summaries or "Invalid API key" in summaries:
+                    st.error('Insufficient quota or invalid API key. Please try again later or contact support.')
+                else:
+                    response = llm_chain.run({'query': query, 'summaries': summaries})
+                    # Save query
+                    with open('queries.txt', 'a') as file:
+                        file.write(query + '\n')
+                    st.success('Done!')
+                    st.write('### Summary:')
+                    st.write(response)
+                    st.download_button(
+                        label="Download Summary",
+                        data=response,
+                        file_name="summary.txt",
+                        mime="text/plain"
+                    )
         else:
             st.warning('Please enter a query.')
 
