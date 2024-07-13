@@ -3,6 +3,7 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from newsapi import NewsApiClient
+import time
 
 # Read API keys from Streamlit secrets
 openai_api_key = st.secrets["openai_api_key"]
@@ -46,3 +47,16 @@ def get_summary(query):
         return articles['error']
     summary = summarize_articles(articles)
     return summary
+
+def call_openai_with_rate_limit_handling(prompt):
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=100
+        )
+        return response.choices[0].text.strip()
+    except openai.error.RateLimitError:
+        st.error("Rate limit exceeded. Retrying after 60 seconds.")
+        time.sleep(60)
+        return call_openai_with_rate_limit_handling(prompt)

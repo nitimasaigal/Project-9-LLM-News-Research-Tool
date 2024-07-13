@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit_authenticator as stauth
-from langchain_config import llm_chain, get_summary
+from langchain_config import llm_chain, get_summary, call_openai_with_rate_limit_handling
 
 # Define user credentials
 credentials = {
@@ -45,22 +45,19 @@ if authentication_status:
         if query:
             with st.spinner('Fetching and summarizing news articles...'):
                 summaries = get_summary(query)
-                if "Insufficient quota" in summaries or "Invalid API key" in summaries:
-                    st.error('Insufficient quota or invalid API key. Please try again later or contact support.')
-                else:
-                    response = llm_chain.run({'query': query, 'summaries': summaries})
-                    # Save query
-                    with open('queries.txt', 'a') as file:
-                        file.write(query + '\n')
-                    st.success('Done!')
-                    st.write('### Summary:')
-                    st.write(response)
-                    st.download_button(
-                        label="Download Summary",
-                        data=response,
-                        file_name="summary.txt",
-                        mime="text/plain"
-                    )
+                response = call_openai_with_rate_limit_handling({'query': query, 'summaries': summaries})
+                # Save query
+                with open('queries.txt', 'a') as file:
+                    file.write(query + '\n')
+            st.success('Done!')
+            st.write('### Summary:')
+            st.write(response)
+            st.download_button(
+                label="Download Summary",
+                data=response,
+                file_name="summary.txt",
+                mime="text/plain"
+            )
         else:
             st.warning('Please enter a query.')
 
