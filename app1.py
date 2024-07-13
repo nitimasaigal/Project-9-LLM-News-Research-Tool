@@ -37,6 +37,7 @@ if authentication_status:
     st.sidebar.button('Home')
     st.sidebar.button('Settings')
 
+    st.write(f"Welcome, {name}!")
     st.title('Equity Research News Tool')
     st.write('Enter your query to get the latest news articles summarized.')
 
@@ -73,3 +74,5 @@ elif authentication_status is False:
     st.error('Username or password is incorrect')
 elif authentication_status is None:
     st.warning('Please enter your username and password')
+
+authenticator.logout("Logout", "sidebar")
