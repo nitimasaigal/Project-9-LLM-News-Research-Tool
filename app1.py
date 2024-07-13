@@ -45,19 +45,22 @@ if authentication_status:
         if query:
             with st.spinner('Fetching and summarizing news articles...'):
                 summaries = get_summary(query)
-                response = call_openai_with_rate_limit_handling({'query': query, 'summaries': summaries})
-                # Save query
-                with open('queries.txt', 'a') as file:
-                    file.write(query + '\n')
-            st.success('Done!')
-            st.write('### Summary:')
-            st.write(response)
-            st.download_button(
-                label="Download Summary",
-                data=response,
-                file_name="summary.txt",
-                mime="text/plain"
-            )
+                if "error" in summaries:
+                    st.error(summaries)
+                else:
+                    response = call_openai_with_rate_limit_handling({'query': query, 'summaries': summaries})
+                    # Save query
+                    with open('queries.txt', 'a') as file:
+                        file.write(query + '\n')
+                    st.success('Done!')
+                    st.write('### Summary:')
+                    st.write(response)
+                    st.download_button(
+                        label="Download Summary",
+                        data=response,
+                        file_name="summary.txt",
+                        mime="text/plain"
+                    )
         else:
             st.warning('Please enter a query.')
 

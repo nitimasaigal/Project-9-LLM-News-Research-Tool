@@ -4,13 +4,14 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from newsapi import NewsApiClient
 import time
+import openai
 
 # Read API keys from Streamlit secrets
 openai_api_key = st.secrets["openai_api_key"]
 newsapi_key = st.secrets["newsapi_key"]
 
 # Initialize OpenAI API
-openai = OpenAI(api_key=openai_api_key)
+openai.api_key = openai_api_key
 
 # Define Prompt Template
 template = """
@@ -21,7 +22,7 @@ Summaries: {summaries}
 """
 
 prompt = PromptTemplate(template=template, input_variables=['query', 'summaries'])
-llm_chain = LLMChain(prompt=prompt, llm=openai)
+llm_chain = LLMChain(prompt=prompt, llm=OpenAI(api_key=openai_api_key))
 
 # Initialize NewsAPI
 newsapi = NewsApiClient(api_key=newsapi_key)
@@ -60,3 +61,7 @@ def call_openai_with_rate_limit_handling(prompt):
         st.error("Rate limit exceeded. Retrying after 60 seconds.")
         time.sleep(60)
         return call_openai_with_rate_limit_handling(prompt)
+    except openai.error.OpenAIError as e:
+        st.error(f"OpenAI API error: {e}")
+        return "An error occurred while processing your request."
+
