@@ -1,78 +1,45 @@
-from langchain_openai import OpenAI
+from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-from langchain.chains.llm import LLMChain
+from langchain.chains import LLMChain
 from newsapi import NewsApiClient
-from unittest.mock import patch
 
-# Mock OpenAI Initialization and Calls
-class MockOpenAI:
-    def __init__(self, *args, **kwargs):
-        pass
+# Initialize OpenAI API
+openai_api_key = 'sk-proj-FsWNF91GJItVdVZfkuVAT3BlbkFJsdYKmR5GYJRosUvO63aG'  
+openai = OpenAI(api_key=openai_api_key)
 
-    def __call__(self, *args, **kwargs):
-        return "Mocked summary response."
+# Define Prompt Template
+template = """
+You are an AI assistant helping an equity research analyst. Given the following query and the provided news article summaries, provide an overall summary.
 
-# Mock NewsApiClient Initialization and Method
-class MockNewsApiClient:
-    def __init__(self, *args, **kwargs):
-        pass
+Query: {query}
+Summaries: {summaries}
+"""
 
-    def get_everything(self, *args, **kwargs):
-        return {
-            'articles': [
-                {'description': 'Article 1 description.'},
-                {'description': 'Article 2 description.'},
-                {'description': None},  # Simulate None description
-                {'description': 'Article 4 description.'}
-            ]
-        }
+prompt = PromptTemplate(template=template, input_variables=['query', 'summaries'])
+llm_chain = LLMChain(prompt=prompt, llm=openai)
 
-# Patching the OpenAI and NewsApiClient classes
-with patch('langchain_openai.OpenAI', MockOpenAI), patch('newsapi.NewsApiClient', MockNewsApiClient):
-    openai_api_key = 'sk-proj-jsFXcInKfwMto5JHf8pXT3BlbkFJrbQz7T6IE0GJ1ex6wuN9'
-    openai = OpenAI(api_key=openai_api_key)
+# Initialize NewsAPI
+newsapi_key = "07ddff56fdb1407caf7d1075d16326fc"  
+newsapi = NewsApiClient(api_key=newsapi_key)
 
-    newsapi = NewsApiClient(api_key='07ddff56fdb1407caf7d1075d16326fc')
-
-    def get_news_articles(query):
+def get_news_articles(query):
+    try:
         articles = newsapi.get_everything(q=query, language='en', sort_by='relevancy')
         return articles['articles']
+    except Exception as e:
+        return {'error': str(e)}
 
-    def summarize_articles(articles):
-        summaries = []
-        for article in articles:
-            description = article.get('description')
-            if description is None:
-                description = 'No description available.'
+def summarize_articles(articles):
+    summaries = []
+    for article in articles:
+        description = article.get('description')
+        if description:
             summaries.append(description)
-        return ' '.join(summaries)
+    return ' '.join(summaries)
 
-    def get_summary(query):
-        articles = get_news_articles(query)
-        summary = summarize_articles(articles)
-        return summary
-
-    template = """
-    You are an AI assistant helping an equity research analyst. Given the following query and the provided news article summaries, provide an overall summary.
-
-    Query: {query}
-    Summaries: {summaries}
-    """
-
-    prompt = PromptTemplate(template=template, input_variables=['query', 'summaries'])
-
-    class MockRunnableSequence:
-        def __init__(self, *args, **kwargs):
-            pass
-        
-        def run(self, *args, **kwargs):
-            return "Mocked summary response."
-    
-    llm_chain = MockRunnableSequence(prompt | openai)
-
-    # Example usage
-    query = "latest trends in artificial intelligence"
-    article_summaries = get_summary(query)
-    summary_input = {'query': query, 'summaries': article_summaries}
-    summary = llm_chain.run(summary_input)
-    print(summary)
+def get_summary(query):
+    articles = get_news_articles(query)
+    if 'error' in articles:
+        return articles['error']
+    summary = summarize_articles(articles)
+    return summary
