@@ -7,7 +7,7 @@ This project is a tool for summarizing news articles using OpenAI's language mod
 
 Prerequisites
 
-Before running the project, we need to ensure that we have the following dependencies installed: Python (version 3.6 or higher), Streamlit (pip install streamlit), langchain, openai, newsapi
+Before running the project, we need to ensure that we have the following dependencies installed: Python (version 3.6 or higher), Streamlit (pip install streamlit), langchain, openai, newsapi. We need to make Openai API Key and NewsAPI Key.
 
 Project Structure
 
@@ -27,12 +27,19 @@ The project is structured as follows:
 
 |--LLM.pdf
 
+I have stored Openai API key and NewsAPI key in secrets.toml file so that it can be safe and no one can leak it.
+
+
 Running the Web App
 
 Navigate to the app/directory and it can be run by running the:
+
 langchain_config.py(python file) by giving the command "python langchain_config.py" 
+
 and then
+
 app1.py(python file) by giving the command "streamlit run app1.py"
+
 
 This is the link for LLM app:
 [myapp](https://project-9-llm.streamlit.app/)
