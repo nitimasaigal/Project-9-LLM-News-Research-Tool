@@ -27,7 +27,7 @@ The project is structured as follows:
 
 |--LLM.pdf
 
-I have stored Openai API key and NewsAPI key in secrets.toml file so that it can be safe and no one can leak it.
+I have stored Openai API key and NewsAPI key in "secrets.toml" file so that it can be safe and no one can leak it.
 
 
 
