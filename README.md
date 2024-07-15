@@ -46,10 +46,15 @@ app1.py(python file) by giving the command "streamlit run app1.py"
 
 
 This is the link for LLM app:
+
 [myapp](https://project-9-llm.streamlit.app/)
+
 After opening this link, it will ask for Username and password
+
 Username: "nitimasaigal@gmail.com"
+
 password: "Hargun@123"
+
 
 The final output is as follows: 
 ![Screenshot 2024-07-13 161009](https://github.com/user-attachments/assets/4d59050a-5c32-4cd2-a154-e7070689a73f)
